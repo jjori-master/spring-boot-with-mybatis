@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="mybatis.repository.QuestionRepositoy">
+    <select id="findById" resultType="Question">
+        SELECT
+            id
+            , title
+            , contents
+        FROM question
+        WHERE id = #{id}
+    </select>
+</mapper>
