@@ -2,13 +2,59 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!--suppress ALL -->
-<mapper namespace="mybatis.repository.QuestionRepositoy">
-    <select id="findById" resultType="Question">
+<mapper namespace="mybatis.dao.QuestionDao">
+
+    <resultMap id="questionResultMap" type="Question">
+        <id property="id" column="question_id"/>
+        <result property="title" column="title"/>
+        <result property="contents" column="contents"/>
+        <association property="writer" javaType="User">
+            <id property="id" column="writer_id"/>
+            <result property="email" column="email"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+
+    <select id="findById" resultMap="questionResultMap">
         SELECT
-            id
-            , title
-            , contents
-        FROM question
-        WHERE id = #{id}
+            question.id as question_id
+            , question.title
+            , question.contents
+            , writer.id as wirter_id
+            , writer.email
+            , writer.name
+        FROM question question inner join user writer
+          ON question.id = writer.id
+        WHERE question.id = #{id}
+    </select>
+
+    <select id="getQuestionTotCount" parameterType="QuestionFilter" resultType="int">
+        SELECT
+        count(1) as cnt
+        FROM question question
+        INNER JOIN user user
+        ON question.writer_id = user.id
+        <where>
+            AND question.title like CONCAT('%', #{title}, '%')
+            AND question.deleted = 0
+        </where>
+    </select>
+
+    <select id="getQuestions" parameterType="QuestionFilter" resultType="Question">
+        SELECT
+        question.id
+        , question.title
+        , question.contents
+        , user.name as user_name
+        FROM question question
+        INNER JOIN user user
+        ON question.writer_id = user.id
+        <where>
+            AND question.title like CONCAT('%', #{title}, '%')
+            AND question.deleted = 0
+        </where>
+        <if test="limit >= 1">
+            limit #{limit} offset #{offset}
+        </if>
     </select>
 </mapper>

@@ -1,12 +1,12 @@
-package mybatis.repository;
+package mybatis.dao;
 
-import mybatis.domain.Question;
+import mybatis.model.Answer;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
-public interface QuestionRepositoy {
-    Question findById(@Param("id") long id);
+public interface AnswerDao {
+    Answer[] getAnswersByQuestionId(@Param("questionId") long id);
 }
