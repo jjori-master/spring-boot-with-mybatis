@@ -13,7 +13,6 @@ import java.util.Arrays;
 
 @Service
 public class QnaService {
-    @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
     @Autowired
     private QuestionDao questionDao;
 
@@ -41,5 +40,9 @@ public class QnaService {
         pageableListResult.list.addAll(Arrays.asList(questions));
 
         return pageableListResult;
+    }
+
+    void saveQuestion(Question question) {
+        questionDao.saveQuestion(question);
     }
 }

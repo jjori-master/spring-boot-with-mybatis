@@ -20,41 +20,58 @@
             question.id as question_id
             , question.title
             , question.contents
-            , writer.id as wirter_id
+            , writer.id as writer_id
             , writer.email
             , writer.name
-        FROM question question inner join user writer
-          ON question.id = writer.id
+        FROM question question INNER JOIN user writer
+          ON question.writer_id = writer.id
         WHERE question.id = #{id}
     </select>
 
     <select id="getQuestionTotCount" parameterType="QuestionFilter" resultType="int">
         SELECT
         count(1) as cnt
-        FROM question question
-        INNER JOIN user user
-        ON question.writer_id = user.id
+        FROM question question INNER JOIN user writer
+        ON question.writer_id = writer.id
         <where>
-            AND question.title like CONCAT('%', #{title}, '%')
+            <if test="writerEmail != null">
+                AND writer.email = #{writerEmail}
+            </if>
+            <if test="title != null">
+                AND question.title like CONCAT('%', #{title}, '%')
+            </if>
             AND question.deleted = 0
         </where>
     </select>
 
-    <select id="getQuestions" parameterType="QuestionFilter" resultType="Question">
+    <select id="getQuestions" parameterType="QuestionFilter" resultMap="questionResultMap">
         SELECT
-        question.id
+        question.id as question_id
         , question.title
         , question.contents
-        , user.name as user_name
-        FROM question question
-        INNER JOIN user user
-        ON question.writer_id = user.id
+        , writer.id as writer_id
+        , writer.email
+        , writer.name
+        FROM question question INNER JOIN user writer
+        ON question.writer_id = writer.id
         <where>
-            AND question.title like CONCAT('%', #{title}, '%')
+            <if test="writerEmail != null">
+                AND writer.email = #{writerEmail}
+            </if>
+            <if test="title != null">
+                AND question.title like CONCAT('%', #{title}, '%')
+            </if>
             AND question.deleted = 0
         </where>
         <if test="limit >= 1">
             limit #{limit} offset #{offset}
         </if>
     </select>
+
+    <insert id="saveQuestion" parameterType="Question">
+        insert into question
+        (create_date, title, contents, deleted, writer_id)
+        values
+        (now(), #{title}, #{contents}, 0, #{writer.id})
+    </insert>
 </mapper>

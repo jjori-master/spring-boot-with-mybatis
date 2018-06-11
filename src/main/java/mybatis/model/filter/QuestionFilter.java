@@ -10,4 +10,5 @@ import lombok.ToString;
 public class QuestionFilter extends BaseFilter {
     private String title;
     private String contests;
+    private String writerEmail;
 }

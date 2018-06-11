@@ -16,4 +16,6 @@ public interface QuestionDao {
 
     int getQuestionTotCount(QuestionFilter filter);
     Question[] getQuestions(QuestionFilter filter);
+
+    void saveQuestion(Question question);
 }
